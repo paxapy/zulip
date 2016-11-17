@@ -1182,10 +1182,7 @@ class SubscriptionAPITest(ZulipTestCase):
         self.assertEqual(msg.recipient.type, Recipient.PERSONAL)
         self.assertEqual(msg.sender_id,
                          get_user_profile_by_email('notification-bot@zulip.com').id)
-        expected_msg = "Hi there!  %s just created a new stream '%s'. " \
-                       "!_stream_subscribe_button(%s)" % (invitee_full_name,
-                                                          invite_streams[0],
-                                                          invite_streams[0])
+        expected_msg = "Hi there!  %s just created a new stream #**%s**." % (invitee_full_name, invite_streams[0])
         self.assertEqual(msg.content, expected_msg)
 
     def test_successful_subscriptions_notifies_stream(self):
@@ -1221,10 +1218,7 @@ class SubscriptionAPITest(ZulipTestCase):
         self.assertEqual(msg.recipient.type, Recipient.STREAM)
         self.assertEqual(msg.sender_id,
                          get_user_profile_by_email('notification-bot@zulip.com').id)
-        expected_msg = "%s just created a new stream `%s`. " \
-                       "!_stream_subscribe_button(%s)" % (invitee_full_name,
-                                                          invite_streams[0],
-                                                          invite_streams[0])
+        expected_msg = "%s just created a new stream #**%s**." % (invitee_full_name, invite_streams[0])
         self.assertEqual(msg.content, expected_msg)
 
     def test_successful_subscriptions_notifies_with_escaping(self):
@@ -1254,10 +1248,7 @@ class SubscriptionAPITest(ZulipTestCase):
         msg = self.get_last_message()
         self.assertEqual(msg.sender_id,
                          get_user_profile_by_email('notification-bot@zulip.com').id)
-        expected_msg = "%s just created a new stream `%s`. " \
-                       "!_stream_subscribe_button(strange \\) \\\\ test)" % (
-                                                          invitee_full_name,
-                                                          invite_streams[0])
+        expected_msg = "%s just created a new stream #**%s**." % (invitee_full_name, invite_streams[0])
         self.assertEqual(msg.content, expected_msg)
 
     def test_non_ascii_stream_subscription(self):
@@ -1332,10 +1323,10 @@ class SubscriptionAPITest(ZulipTestCase):
         self.assertEqual(msg.sender_id,
                 get_user_profile_by_email("notification-bot@zulip.com").id)
         expected_msg = ("Hi there!  We thought you'd like to know that %s just "
-                        "subscribed you to the %sstream [%s](#narrow/stream/%s)."
+                        "subscribed you to the %sstream #**%s**."
                         % (self.user_profile.full_name,
                            '**invite-only** ' if invite_only else '',
-                           streams[0], urllib.parse.quote(streams[0].encode('utf-8'))))
+                           streams[0]))
 
         if not Stream.objects.get(name=streams[0]).invite_only:
             expected_msg += ("\nYou can see historical content on a "
